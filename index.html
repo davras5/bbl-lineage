@@ -9,430 +9,715 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.6/dist/vis-network.min.css" rel="stylesheet" type="text/css" />
     
     <style>
-        body {
+        :root {
+            /* Swiss Federal Design Colors - CD Bund konform */
+            --swiss-red: #DC0018;
+            --swiss-dark: #333333;
+            --swiss-gray-dark: #666666;
+            --swiss-gray-medium: #999999;
+            --swiss-gray-light: #CCCCCC;
+            --swiss-gray-lighter: #E5E5E5;
+            --swiss-gray-lightest: #F2F2F2;
+            --swiss-white: #FFFFFF;
+            --swiss-blue: #006699;
+            --swiss-blue-light: #66AFE9;
+            --swiss-green: #00703C;
+        }
+        
+        * {
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-sizing: border-box;
         }
         
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 20px;
+        body {
+            font-family: "Frutiger Neue", "Frutiger", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: var(--swiss-white);
+            color: var(--swiss-dark);
+            line-height: 1.6;
+            overflow: hidden;
         }
         
+        /* CD Bund konformer Header */
         .header {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: var(--swiss-white);
+            border-bottom: 4px solid var(--swiss-red);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
         }
         
-        h1 {
-            margin: 0 0 10px 0;
-            color: #2d3748;
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--swiss-dark);
+            letter-spacing: -0.01em;
+            margin: 0;
         }
         
         .subtitle {
-            color: #718096;
-            margin: 0;
+            font-size: 14px;
+            color: var(--swiss-gray-dark);
+            font-weight: 400;
         }
         
+        /* Kompakte Controls Bar */
         .controls {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: var(--swiss-gray-lightest);
+            padding: 12px 24px;
+            border-bottom: 1px solid var(--swiss-gray-light);
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+            flex-shrink: 0;
         }
         
         .control-group {
-            display: inline-block;
-            margin-right: 20px;
-            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .control-group label {
-            font-weight: 600;
-            color: #4a5568;
-            margin-right: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--swiss-dark);
         }
         
-        select, button {
-            padding: 8px 15px;
-            border-radius: 5px;
-            border: 1px solid #cbd5e0;
-            background: white;
-            color: #4a5568;
+        select, button, input {
+            padding: 8px 16px;
+            border: 1px solid var(--swiss-gray-light);
+            background: var(--swiss-white);
+            color: var(--swiss-dark);
+            font-size: 14px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.15s ease;
+            border-radius: 0;
+            font-family: inherit;
         }
         
-        select:hover, button:hover {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        input[type="text"] {
+            cursor: text;
+        }
+        
+        select:hover, input:hover {
+            border-color: var(--swiss-blue);
+        }
+        
+        select:focus, input:focus {
+            outline: 2px solid var(--swiss-blue);
+            outline-offset: 0;
+            border-color: var(--swiss-blue);
         }
         
         button {
-            background: #667eea;
-            color: white;
+            background: var(--swiss-blue);
+            color: var(--swiss-white);
             border: none;
             font-weight: 600;
+            text-transform: none;
+            letter-spacing: 0;
         }
         
         button:hover {
-            background: #5a67d8;
+            background: #005580;
         }
         
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        button.danger {
+            background: var(--swiss-red);
+        }
+        
+        button.danger:hover {
+            background: #B30014;
+        }
+        
+        button.success {
+            background: var(--swiss-green);
+        }
+        
+        button.success:hover {
+            background: #005530;
+        }
+        
+        button:disabled {
+            background: var(--swiss-gray-light);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        /* Hauptcontainer für maximale Raumnutzung - FIXIERT */
+        .main-container {
+            display: flex;
+            height: calc(100vh - 110px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Graph nimmt den gesamten verfügbaren Raum ein */
         #network {
-            height: 700px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            background: var(--swiss-white);
+            border: none;
+            height: 100%;
+            width: 100%;
         }
         
+        /* Fehlermeldung - CD Bund konform */
+        .error-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--swiss-white);
+            border: 2px solid var(--swiss-red);
+            border-radius: 0;
+            padding: 32px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+        }
+        
+        .error-message h2 {
+            color: var(--swiss-red);
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .error-message p {
+            color: var(--swiss-dark);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        
+        .error-message code {
+            background: var(--swiss-gray-lightest);
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-family: "Courier New", monospace;
+            font-size: 13px;
+        }
+        
+        .error-message ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        
+        .error-message li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        
+        /* Kompakte, ausklappbare Legende */
         .legend {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.97);
+            border: 1px solid var(--swiss-gray-light);
+            padding: 16px;
+            border-radius: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            z-index: 10;
+            transition: all 0.2s ease;
         }
         
-        .legend h3 {
-            margin-top: 0;
-            color: #2d3748;
+        .legend.collapsed {
+            padding: 12px 16px;
+            max-width: auto;
         }
         
-        .legend-items {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+        .legend-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .legend-header h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--swiss-dark);
+        }
+        
+        .toggle-icon {
+            font-size: 14px;
+            color: var(--swiss-gray-medium);
+            font-weight: bold;
+        }
+        
+        .legend-content {
+            margin-top: 12px;
         }
         
         .legend-item {
             display: flex;
             align-items: center;
+            margin-bottom: 8px;
+            font-size: 13px;
         }
         
         .legend-color {
-            width: 30px;
-            height: 30px;
-            border-radius: 5px;
+            width: 24px;
+            height: 24px;
             margin-right: 10px;
-            border: 2px solid #e2e8f0;
+            border: 1px solid var(--swiss-gray-light);
+            flex-shrink: 0;
         }
         
-        .info-panel {
-            position: fixed;
+        /* Stats Panel - CD Bund konform */
+        .stats-panel {
+            position: absolute;
             top: 20px;
             right: 20px;
-            background: white;
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 300px;
-            display: none;
-            z-index: 1000;
+            background: rgba(255, 255, 255, 0.97);
+            border: 1px solid var(--swiss-gray-light);
+            padding: 12px 16px;
+            border-radius: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            font-size: 13px;
+            color: var(--swiss-dark);
+            z-index: 10;
+            font-weight: 500;
         }
         
-        .info-panel.active {
+        /* Edit Panel */
+        .edit-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--swiss-white);
+            border: 2px solid var(--swiss-blue);
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .edit-panel.active {
             display: block;
         }
         
-        .info-panel h4 {
-            margin-top: 0;
-            color: #2d3748;
+        .edit-panel h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--swiss-dark);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--swiss-gray-lighter);
         }
         
-        .info-panel .close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            cursor: pointer;
-            font-size: 20px;
-            color: #718096;
+        .edit-panel .form-group {
+            margin-bottom: 16px;
         }
         
-        .stats {
-            background: #f7fafc;
-            border-radius: 5px;
-            padding: 10px;
-            margin-top: 10px;
+        .edit-panel label {
+            display: block;
             font-size: 14px;
+            font-weight: 600;
+            color: var(--swiss-dark);
+            margin-bottom: 6px;
+        }
+        
+        .edit-panel input,
+        .edit-panel select {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 14px;
+        }
+        
+        .edit-panel .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            justify-content: flex-end;
+        }
+        
+        .edit-panel button {
+            min-width: 100px;
+        }
+        
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        /* Edit Mode Badge */
+        .edit-mode-badge {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--swiss-green);
+            color: var(--swiss-white);
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            z-index: 10;
+            display: none;
+        }
+        
+        .edit-mode-badge.active {
+            display: block;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .control-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .legend {
+                max-width: 250px;
+            }
+            
+            .stats-panel {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin: 12px 24px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🏢 IMMO Integration Layer - Datenfluss Visualisierung</h1>
-            <p class="subtitle">Interaktive Darstellung der Systemlandschaft BBL</p>
-        </div>
-        
-        <div class="controls">
-            <div class="control-group">
-                <label>Layout:</label>
-                <select id="layoutSelect">
-                    <option value="hierarchical">Hierarchisch</option>
-                    <option value="physics">Physik-basiert</option>
-                    <option value="circular">Kreisförmig</option>
-                </select>
-            </div>
-            
-            <div class="control-group">
-                <label>Filter Kategorie:</label>
-                <select id="categoryFilter">
-                    <option value="all">Alle anzeigen</option>
-                    <option value="dataOwner">Nur Data Owner</option>
-                    <option value="extSystem">Externe Systeme</option>
-                    <option value="sapERP">SAP ERP</option>
-                    <option value="fachsystem">Fachsysteme</option>
-                    <option value="dokumente">Dokumente</option>
-                </select>
-            </div>
-            
-            <div class="control-group">
-                <label>Filter Kritikalität:</label>
-                <select id="priorityFilter">
-                    <option value="all">Alle Verbindungen</option>
-                    <option value="high">Nur hohe Priorität</option>
-                    <option value="medium">Nur mittlere Priorität</option>
-                    <option value="low">Nur niedrige Priorität</option>
-                </select>
-            </div>
-            
-            <div class="control-group">
-                <button onclick="resetView()">🔄 Ansicht zurücksetzen</button>
-            </div>
-            
-            <div class="control-group">
-                <button onclick="exportData()">💾 Export JSON</button>
-            </div>
-        </div>
-        
-        <div id="network"></div>
-        
-        <div class="legend">
-            <h3>Legende</h3>
-            <div class="legend-items">
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #FFF3CD;"></div>
-                    <span><strong>Data Owner</strong> - Datenverantwortliche</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #A8D8EA;"></div>
-                    <span><strong>Externe Systeme</strong> - Datenquellen</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #90EE90;"></div>
-                    <span><strong>SAP ERP</strong> - Kernsysteme</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #FFE4B5;"></div>
-                    <span><strong>Fachsysteme</strong> - Speziallösungen</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #E6E6FA;"></div>
-                    <span><strong>Dokumente</strong> - DMS/Archiv</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #FFB6C1;"></div>
-                    <span><strong>Visualisierung</strong> - GIS/BIM</span>
-                </div>
-            </div>
-            <div class="stats" id="stats">
-                Lade Statistiken...
-            </div>
-        </div>
-        
-        <div class="info-panel" id="infoPanel">
-            <span class="close" onclick="closeInfoPanel()">×</span>
-            <h4 id="infoTitle">System Information</h4>
-            <div id="infoContent"></div>
+    <div class="header">
+        <div>
+            <h1>IMMO Integration Layer</h1>
+            <div class="subtitle">Datenfluss Visualisierung - SUPERB Programm</div>
         </div>
     </div>
     
-    <!-- vis.js Network JavaScript -->
+    <div class="controls">
+        <div class="control-group">
+            <label for="categoryFilter">Kategorie:</label>
+            <select id="categoryFilter">
+                <option value="all">Alle anzeigen</option>
+                <option value="dataOwner">Data Owner</option>
+                <option value="extSystem">Externe Systeme</option>
+                <option value="sapERP">SAP ERP</option>
+                <option value="fachsystem">Fachsysteme</option>
+                <option value="dokumente">Dokumente</option>
+                <option value="visualisierung">Visualisierung</option>
+                <option value="person">Nutzer</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label for="priorityFilter">Priorität:</label>
+            <select id="priorityFilter">
+                <option value="all">Alle anzeigen</option>
+                <option value="high">Hoch</option>
+                <option value="medium">Mittel</option>
+                <option value="low">Niedrig</option>
+            </select>
+        </div>
+        
+        <button onclick="resetView()">↻ Ansicht zurücksetzen</button>
+        <button onclick="reloadData()">🔄 Daten neu laden</button>
+        <button onclick="toggleEditMode()" id="editModeBtn">✏️ Editiermodus</button>
+        <button onclick="exportData()">⬇ Daten exportieren</button>
+    </div>
+    
+    <div class="main-container">
+        <div id="network"></div>
+        
+        <div class="legend collapsed">
+            <div class="legend-header" onclick="toggleLegend()">
+                <h3>Legende</h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="legend-content" style="display: none;">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #FFF3CD;"></div>
+                    <span>Data Owner</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #A8D8EA;"></div>
+                    <span>Externe Systeme</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #90EE90;"></div>
+                    <span>SAP ERP</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #FFE4B5;"></div>
+                    <span>Fachsysteme</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #E6E6FA;"></div>
+                    <span>Dokumente</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #FFB6C1;"></div>
+                    <span>Visualisierung</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-panel" id="stats">
+            Lade Daten...
+        </div>
+        
+        <div class="edit-mode-badge" id="editModeBadge">
+            EDITIERMODUS AKTIV
+        </div>
+    </div>
+    
+    <!-- Edit Panel -->
+    <div class="overlay" id="overlay" onclick="closeEditPanel()"></div>
+    <div class="edit-panel" id="editPanel">
+        <h2 id="editPanelTitle">Element bearbeiten</h2>
+        <div id="editPanelContent">
+            <!-- Content will be dynamically inserted -->
+        </div>
+    </div>
+    
+    <!-- vis.js Network JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.6/dist/vis-network.min.js"></script>
     
     <script>
-        let network = null;
-        let nodes = null;
-        let edges = null;
+        let network;
+        let nodes;
+        let edges;
         let allNodes = [];
         let allEdges = [];
+        let editMode = false;
         
-        // Lade die Daten
-        async function loadData() {
-            try {
-                const response = await fetch('data.json');
-                const data = await response.json();
-                initializeNetwork(data);
-                updateStats();
-            } catch (error) {
-                console.error('Fehler beim Laden der Daten:', error);
-                // Fallback zu eingebetteten Daten
-                initializeNetwork(getEmbeddedData());
-                updateStats();
+        // Netzwerk-Optionen - CD Bund optimiert
+        const options = {
+            nodes: {
+                shape: 'box',
+                margin: 10,
+                font: {
+                    size: 13,
+                    face: 'Frutiger Neue, Frutiger, Helvetica, Arial',
+                    color: '#333333',
+                    bold: {
+                        size: 14
+                    }
+                },
+                borderWidth: 2,
+                shadow: {
+                    enabled: true,
+                    color: 'rgba(0,0,0,0.1)',
+                    size: 3,
+                    x: 0,
+                    y: 2
+                }
+            },
+            edges: {
+                smooth: {
+                    type: 'cubicBezier',
+                    forceDirection: 'horizontal',
+                    roundness: 0.4
+                },
+                font: {
+                    size: 11,
+                    face: 'Frutiger Neue, Frutiger, Helvetica, Arial',
+                    color: '#666666',
+                    background: '#FFFFFF',
+                    strokeWidth: 0
+                },
+                arrows: {
+                    to: {
+                        enabled: true,
+                        scaleFactor: 0.8
+                    }
+                },
+                length: 250
+            },
+            physics: {
+                enabled: true,
+                hierarchicalRepulsion: {
+                    centralGravity: 0.3,
+                    springLength: 150,
+                    springConstant: 0.05,
+                    nodeDistance: 200,
+                    damping: 0.09
+                },
+                solver: 'hierarchicalRepulsion',
+                stabilization: {
+                    enabled: true,
+                    iterations: 200,
+                    fit: true
+                }
+            },
+            interaction: {
+                hover: true,
+                tooltipDelay: 200,
+                hideEdgesOnDrag: false,
+                multiselect: editMode
+            },
+            layout: {
+                hierarchical: {
+                    enabled: false
+                }
             }
+        };
+        
+        function loadData() {
+            // Versuche data.json aus dem gleichen Ordner zu laden
+            fetch('data.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    initializeNetwork(data);
+                })
+                .catch(error => {
+                    showError(`Fehler beim Laden der data.json: ${error.message}`);
+                });
+        }
+        
+        function reloadData() {
+            // Reload data.json with cache bypass
+            const timestamp = new Date().getTime();
+            fetch(`data.json?t=${timestamp}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Clear existing network
+                    if (network) {
+                        network.destroy();
+                    }
+                    // Reinitialize with new data
+                    initializeNetwork(data);
+                })
+                .catch(error => {
+                    alert(`Fehler beim Neuladen der Daten: ${error.message}`);
+                });
+        }
+        
+        function showError(message) {
+            const container = document.getElementById('network');
+            container.innerHTML = `
+                <div class="error-message">
+                    <h2>⚠️ Fehler beim Laden der Daten</h2>
+                    <p>${message}</p>
+                    <p style="margin-top: 16px;">Bitte stellen Sie sicher, dass:</p>
+                    <ul style="text-align: left; margin: 16px auto; max-width: 400px;">
+                        <li>Die Datei <code>data.json</code> im gleichen Ordner wie <code>index.html</code> liegt</li>
+                        <li>Die JSON-Datei folgendes Format hat:<br><code>{ "nodes": [...], "edges": [...] }</code></li>
+                        <li>Die Dateien korrekt auf GitHub Pages deployed sind</li>
+                    </ul>
+                </div>
+            `;
         }
         
         function initializeNetwork(data) {
-            // Erstelle Nodes und Edges DataSets
+            if (!data.nodes || !data.edges) {
+                showError('Ungültiges Datenformat. Die Datei muss "nodes" und "edges" enthalten.');
+                return;
+            }
+            
             allNodes = data.nodes;
             allEdges = data.edges;
             
+            const container = document.getElementById('network');
             nodes = new vis.DataSet(allNodes);
             edges = new vis.DataSet(allEdges);
             
-            // Erstelle das Netzwerk
-            const container = document.getElementById('network');
             const networkData = {
                 nodes: nodes,
                 edges: edges
             };
             
-            const options = {
-                layout: {
-                    hierarchical: {
-                        enabled: true,
-                        direction: 'UD',
-                        sortMethod: 'directed',
-                        levelSeparation: 150,
-                        nodeSpacing: 200
-                    }
-                },
-                physics: {
-                    enabled: false,
-                    hierarchicalRepulsion: {
-                        nodeDistance: 200,
-                        springLength: 200
-                    }
-                },
-                nodes: {
-                    font: {
-                        size: 14,
-                        face: 'Arial'
-                    },
-                    borderWidth: 2,
-                    shadow: true
-                },
-                edges: {
-                    smooth: {
-                        type: 'cubicBezier',
-                        roundness: 0.4
-                    },
-                    font: {
-                        size: 10,
-                        align: 'horizontal',
-                        background: 'white',
-                        strokeWidth: 3,
-                        strokeColor: 'white'
-                    }
-                },
-                interaction: {
-                    hover: true,
-                    tooltipDelay: 200,
-                    hideEdgesOnDrag: true
-                }
-            };
-            
             network = new vis.Network(container, networkData, options);
             
-            // Event Handlers
-            network.on("click", function(params) {
-                if (params.nodes.length > 0) {
-                    showNodeInfo(params.nodes[0]);
+            // Event Listeners
+            network.on('selectNode', function(params) {
+                if (editMode && params.nodes.length > 0) {
+                    openNodeEditor(params.nodes[0]);
                 }
             });
             
-            network.on("doubleClick", function(params) {
-                if (params.nodes.length > 0) {
-                    focusOnNode(params.nodes[0]);
+            network.on('selectEdge', function(params) {
+                if (editMode && params.edges.length > 0) {
+                    openEdgeEditor(params.edges[0]);
                 }
+            });
+            
+            network.on('doubleClick', function(params) {
+                if (editMode && params.nodes.length === 0 && params.edges.length === 0) {
+                    const pointer = params.pointer.canvas;
+                    openNodeCreator(pointer);
+                }
+            });
+            
+            updateStats();
+            
+            // Fit after stabilization
+            network.once('stabilizationIterationsDone', function() {
+                network.fit({
+                    animation: {
+                        duration: 500,
+                        easingFunction: 'easeInOutQuad'
+                    }
+                });
             });
         }
         
-        function showNodeInfo(nodeId) {
-            const node = nodes.get(nodeId);
-            const connectedNodes = network.getConnectedNodes(nodeId);
-            const connectedEdges = network.getConnectedEdges(nodeId);
+        function toggleLegend() {
+            const legend = document.querySelector('.legend');
+            const content = document.querySelector('.legend-content');
+            const icon = document.querySelector('.toggle-icon');
             
-            document.getElementById('infoTitle').textContent = node.label;
-            document.getElementById('infoContent').innerHTML = `
-                <p><strong>Kategorie:</strong> ${node.group}</p>
-                <p><strong>Beschreibung:</strong> ${node.title || 'Keine Beschreibung verfügbar'}</p>
-                <p><strong>Verbindungen:</strong> ${connectedNodes.length} Systeme</p>
-                <p><strong>Datenflüsse:</strong> ${connectedEdges.length}</p>
-                ${node.dataOwner ? `<p><strong>Data Owner:</strong> ${node.dataOwner}</p>` : ''}
-                ${node.status ? `<p><strong>Status:</strong> ${node.status}</p>` : ''}
-            `;
+            legend.classList.toggle('collapsed');
             
-            document.getElementById('infoPanel').classList.add('active');
-        }
-        
-        function closeInfoPanel() {
-            document.getElementById('infoPanel').classList.remove('active');
-        }
-        
-        function focusOnNode(nodeId) {
-            network.focus(nodeId, {
-                scale: 1.5,
-                animation: {
-                    duration: 1000,
-                    easingFunction: 'easeInOutQuad'
-                }
-            });
-        }
-        
-        function changeLayout() {
-            const layout = document.getElementById('layoutSelect').value;
-            let options = {};
-            
-            switch(layout) {
-                case 'hierarchical':
-                    options = {
-                        layout: {
-                            hierarchical: {
-                                enabled: true,
-                                direction: 'UD',
-                                sortMethod: 'directed'
-                            }
-                        },
-                        physics: { enabled: false }
-                    };
-                    break;
-                case 'physics':
-                    options = {
-                        layout: { hierarchical: { enabled: false } },
-                        physics: { enabled: true }
-                    };
-                    break;
-                case 'circular':
-                    options = {
-                        layout: {
-                            hierarchical: { enabled: false }
-                        },
-                        physics: { enabled: false }
-                    };
-                    // Arrange nodes in circle
-                    const nodeIds = nodes.getIds();
-                    const angleStep = (2 * Math.PI) / nodeIds.length;
-                    const radius = 300;
-                    nodeIds.forEach((id, index) => {
-                        const angle = index * angleStep;
-                        network.moveNode(id, 
-                            radius * Math.cos(angle), 
-                            radius * Math.sin(angle)
-                        );
-                    });
-                    break;
+            if (legend.classList.contains('collapsed')) {
+                content.style.display = 'none';
+                icon.textContent = '▼';
+            } else {
+                content.style.display = 'block';
+                icon.textContent = '▲';
             }
-            
-            network.setOptions(options);
         }
         
         function filterByCategory() {
@@ -462,6 +747,8 @@
         }
         
         function resetView() {
+            if (!network) return;
+            
             network.fit({
                 animation: {
                     duration: 1000,
@@ -469,17 +756,19 @@
                 }
             });
             
-            // Reset all filters
             document.getElementById('categoryFilter').value = 'all';
             document.getElementById('priorityFilter').value = 'all';
-            document.getElementById('layoutSelect').value = 'hierarchical';
             
             filterByCategory();
             filterByPriority();
-            changeLayout();
         }
         
         function exportData() {
+            if (!nodes || !edges) {
+                alert('Keine Daten zum Exportieren vorhanden.');
+                return;
+            }
+            
             const data = {
                 nodes: nodes.get(),
                 edges: edges.get()
@@ -489,120 +778,456 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'immo-network-data.json';
+            const timestamp = new Date().toISOString().slice(0, 10);
+            a.download = `immo-network-data-${timestamp}.json`;
             a.click();
+            URL.revokeObjectURL(url);
         }
         
         function updateStats() {
+            if (!nodes || !edges) return;
+            
             const nodeCount = nodes.length;
             const edgeCount = edges.length;
-            const categories = {};
             
-            nodes.forEach(node => {
-                categories[node.group] = (categories[node.group] || 0) + 1;
-            });
-            
-            const statsHtml = `
-                <strong>Statistiken:</strong><br>
-                Systeme: ${nodeCount} | Verbindungen: ${edgeCount}<br>
-                ${Object.entries(categories).map(([cat, count]) => 
-                    `${cat}: ${count}`).join(' | ')}
-            `;
+            const statsHtml = `Systeme: ${nodeCount} | Verbindungen: ${edgeCount}`;
             
             document.getElementById('stats').innerHTML = statsHtml;
         }
         
+        // Edit Mode Functions
+        function toggleEditMode() {
+            editMode = !editMode;
+            const badge = document.getElementById('editModeBadge');
+            const btn = document.getElementById('editModeBtn');
+            
+            if (editMode) {
+                badge.classList.add('active');
+                btn.textContent = '✓ Editiermodus aktiv';
+                btn.classList.add('success');
+                network.setOptions({ interaction: { multiselect: true } });
+            } else {
+                badge.classList.remove('active');
+                btn.textContent = '✏️ Editiermodus';
+                btn.classList.remove('success');
+                network.setOptions({ interaction: { multiselect: false } });
+                closeEditPanel();
+            }
+        }
+        
+        function openNodeEditor(nodeId) {
+            const node = nodes.get(nodeId);
+            if (!node) return;
+            
+            const content = `
+                <div class="form-group">
+                    <label>Node ID:</label>
+                    <input type="text" id="editNodeId" value="${node.id}" disabled>
+                </div>
+                <div class="form-group">
+                    <label>Label (Name):</label>
+                    <input type="text" id="editNodeLabel" value="${node.label || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Gruppe:</label>
+                    <select id="editNodeGroup">
+                        <option value="dataOwner" ${node.group === 'dataOwner' ? 'selected' : ''}>Data Owner</option>
+                        <option value="extSystem" ${node.group === 'extSystem' ? 'selected' : ''}>Externe Systeme</option>
+                        <option value="sapERP" ${node.group === 'sapERP' ? 'selected' : ''}>SAP ERP</option>
+                        <option value="fachsystem" ${node.group === 'fachsystem' ? 'selected' : ''}>Fachsysteme</option>
+                        <option value="dokumente" ${node.group === 'dokumente' ? 'selected' : ''}>Dokumente</option>
+                        <option value="visualisierung" ${node.group === 'visualisierung' ? 'selected' : ''}>Visualisierung</option>
+                        <option value="person" ${node.group === 'person' ? 'selected' : ''}>Nutzer</option>
+                    </select>
+                </div>
+                <div class="button-group">
+                    <button class="danger" onclick="deleteNode('${nodeId}')">🗑️ Löschen</button>
+                    <button onclick="closeEditPanel()">Abbrechen</button>
+                    <button class="success" onclick="saveNodeEdit('${nodeId}')">💾 Speichern</button>
+                </div>
+            `;
+            
+            document.getElementById('editPanelTitle').textContent = 'Node bearbeiten';
+            document.getElementById('editPanelContent').innerHTML = content;
+            document.getElementById('editPanel').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        }
+        
+        function saveNodeEdit(nodeId) {
+            const newLabel = document.getElementById('editNodeLabel').value;
+            const newGroup = document.getElementById('editNodeGroup').value;
+            
+            if (!newLabel.trim()) {
+                alert('Bitte geben Sie einen Label ein.');
+                return;
+            }
+            
+            // Get color for the group
+            const colorMap = {
+                'dataOwner': '#FFF3CD',
+                'extSystem': '#A8D8EA',
+                'sapERP': '#90EE90',
+                'fachsystem': '#FFE4B5',
+                'dokumente': '#E6E6FA',
+                'visualisierung': '#FFB6C1',
+                'person': '#FFFFFF'
+            };
+            
+            nodes.update({
+                id: nodeId,
+                label: newLabel,
+                group: newGroup,
+                color: colorMap[newGroup]
+            });
+            
+            // Update in allNodes
+            const index = allNodes.findIndex(n => n.id === nodeId);
+            if (index !== -1) {
+                allNodes[index].label = newLabel;
+                allNodes[index].group = newGroup;
+                allNodes[index].color = colorMap[newGroup];
+            }
+            
+            closeEditPanel();
+            updateStats();
+        }
+        
+        function deleteNode(nodeId) {
+            if (!confirm('Möchten Sie diesen Node wirklich löschen?')) return;
+            
+            // Delete connected edges
+            const connectedEdges = edges.get({
+                filter: edge => edge.from === nodeId || edge.to === nodeId
+            });
+            
+            connectedEdges.forEach(edge => {
+                edges.remove(edge.id);
+                const edgeIndex = allEdges.findIndex(e => e.id === edge.id);
+                if (edgeIndex !== -1) {
+                    allEdges.splice(edgeIndex, 1);
+                }
+            });
+            
+            // Delete node
+            nodes.remove(nodeId);
+            const nodeIndex = allNodes.findIndex(n => n.id === nodeId);
+            if (nodeIndex !== -1) {
+                allNodes.splice(nodeIndex, 1);
+            }
+            
+            closeEditPanel();
+            updateStats();
+        }
+        
+        function openEdgeEditor(edgeId) {
+            const edge = edges.get(edgeId);
+            if (!edge) return;
+            
+            const allNodesList = nodes.get();
+            const fromNode = allNodesList.find(n => n.id === edge.from);
+            const toNode = allNodesList.find(n => n.id === edge.to);
+            
+            const content = `
+                <div class="form-group">
+                    <label>Von: ${fromNode ? fromNode.label : edge.from}</label>
+                </div>
+                <div class="form-group">
+                    <label>Zu: ${toNode ? toNode.label : edge.to}</label>
+                </div>
+                <div class="form-group">
+                    <label>Label:</label>
+                    <input type="text" id="editEdgeLabel" value="${edge.label || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Priorität:</label>
+                    <select id="editEdgePriority">
+                        <option value="high" ${edge.priority === 'high' ? 'selected' : ''}>Hoch</option>
+                        <option value="medium" ${edge.priority === 'medium' ? 'selected' : ''}>Mittel</option>
+                        <option value="low" ${edge.priority === 'low' ? 'selected' : ''}>Niedrig</option>
+                    </select>
+                </div>
+                <div class="button-group">
+                    <button class="danger" onclick="deleteEdge('${edgeId}')">🗑️ Löschen</button>
+                    <button onclick="closeEditPanel()">Abbrechen</button>
+                    <button class="success" onclick="saveEdgeEdit('${edgeId}')">💾 Speichern</button>
+                </div>
+            `;
+            
+            document.getElementById('editPanelTitle').textContent = 'Relation bearbeiten';
+            document.getElementById('editPanelContent').innerHTML = content;
+            document.getElementById('editPanel').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        }
+        
+        function saveEdgeEdit(edgeId) {
+            const newLabel = document.getElementById('editEdgeLabel').value;
+            const newPriority = document.getElementById('editEdgePriority').value;
+            
+            const colorMap = {
+                'high': '#FF0000',
+                'medium': '#0066CC',
+                'low': '#666666'
+            };
+            
+            const widthMap = {
+                'high': 4,
+                'medium': 2,
+                'low': 1
+            };
+            
+            edges.update({
+                id: edgeId,
+                label: newLabel,
+                priority: newPriority,
+                color: colorMap[newPriority],
+                width: widthMap[newPriority]
+            });
+            
+            // Update in allEdges
+            const index = allEdges.findIndex(e => e.id === edgeId);
+            if (index !== -1) {
+                allEdges[index].label = newLabel;
+                allEdges[index].priority = newPriority;
+                allEdges[index].color = colorMap[newPriority];
+                allEdges[index].width = widthMap[newPriority];
+            }
+            
+            closeEditPanel();
+        }
+        
+        function deleteEdge(edgeId) {
+            if (!confirm('Möchten Sie diese Relation wirklich löschen?')) return;
+            
+            edges.remove(edgeId);
+            const edgeIndex = allEdges.findIndex(e => e.id === edgeId);
+            if (edgeIndex !== -1) {
+                allEdges.splice(edgeIndex, 1);
+            }
+            
+            closeEditPanel();
+            updateStats();
+        }
+        
+        function openNodeCreator(pointer) {
+            const allNodesList = nodes.get();
+            const nodeOptions = allNodesList.map(n => 
+                `<option value="${n.id}">${n.label || n.id}</option>`
+            ).join('');
+            
+            const content = `
+                <div class="form-group">
+                    <label>Aktion wählen:</label>
+                    <select id="creatorAction" onchange="updateCreatorForm()">
+                        <option value="">-- Bitte wählen --</option>
+                        <option value="newNode">Neuen Node erstellen</option>
+                        <option value="newEdge">Neue Relation erstellen</option>
+                    </select>
+                </div>
+                <div id="creatorFormContent"></div>
+            `;
+            
+            document.getElementById('editPanelTitle').textContent = 'Neu erstellen';
+            document.getElementById('editPanelContent').innerHTML = content;
+            document.getElementById('editPanel').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+            
+            // Store pointer position for new node creation
+            window.newNodePosition = pointer;
+        }
+        
+        function updateCreatorForm() {
+            const action = document.getElementById('creatorAction').value;
+            const contentDiv = document.getElementById('creatorFormContent');
+            
+            if (action === 'newNode') {
+                contentDiv.innerHTML = `
+                    <div class="form-group">
+                        <label>Node ID:</label>
+                        <input type="text" id="newNodeId" placeholder="z.B. B16">
+                    </div>
+                    <div class="form-group">
+                        <label>Label (Name):</label>
+                        <input type="text" id="newNodeLabel" placeholder="z.B. Neues System">
+                    </div>
+                    <div class="form-group">
+                        <label>Gruppe:</label>
+                        <select id="newNodeGroup">
+                            <option value="dataOwner">Data Owner</option>
+                            <option value="extSystem">Externe Systeme</option>
+                            <option value="sapERP">SAP ERP</option>
+                            <option value="fachsystem">Fachsysteme</option>
+                            <option value="dokumente">Dokumente</option>
+                            <option value="visualisierung">Visualisierung</option>
+                            <option value="person">Nutzer</option>
+                        </select>
+                    </div>
+                    <div class="button-group">
+                        <button onclick="closeEditPanel()">Abbrechen</button>
+                        <button class="success" onclick="createNewNode()">✓ Node erstellen</button>
+                    </div>
+                `;
+            } else if (action === 'newEdge') {
+                const allNodesList = nodes.get();
+                const nodeOptions = allNodesList.map(n => 
+                    `<option value="${n.id}">${n.label || n.id}</option>`
+                ).join('');
+                
+                contentDiv.innerHTML = `
+                    <div class="form-group">
+                        <label>Von Node:</label>
+                        <select id="newEdgeFrom">
+                            <option value="">-- Bitte wählen --</option>
+                            ${nodeOptions}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Zu Node:</label>
+                        <select id="newEdgeTo">
+                            <option value="">-- Bitte wählen --</option>
+                            ${nodeOptions}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Label:</label>
+                        <input type="text" id="newEdgeLabel" placeholder="z.B. Datenfluss">
+                    </div>
+                    <div class="form-group">
+                        <label>Priorität:</label>
+                        <select id="newEdgePriority">
+                            <option value="high">Hoch</option>
+                            <option value="medium" selected>Mittel</option>
+                            <option value="low">Niedrig</option>
+                        </select>
+                    </div>
+                    <div class="button-group">
+                        <button onclick="closeEditPanel()">Abbrechen</button>
+                        <button class="success" onclick="createNewEdge()">✓ Relation erstellen</button>
+                    </div>
+                `;
+            } else {
+                contentDiv.innerHTML = '';
+            }
+        }
+        
+        function createNewNode() {
+            const nodeId = document.getElementById('newNodeId').value.trim();
+            const nodeLabel = document.getElementById('newNodeLabel').value.trim();
+            const nodeGroup = document.getElementById('newNodeGroup').value;
+            
+            if (!nodeId || !nodeLabel) {
+                alert('Bitte füllen Sie alle Felder aus.');
+                return;
+            }
+            
+            // Check if ID already exists
+            if (nodes.get(nodeId)) {
+                alert('Ein Node mit dieser ID existiert bereits.');
+                return;
+            }
+            
+            const colorMap = {
+                'dataOwner': '#FFF3CD',
+                'extSystem': '#A8D8EA',
+                'sapERP': '#90EE90',
+                'fachsystem': '#FFE4B5',
+                'dokumente': '#E6E6FA',
+                'visualisierung': '#FFB6C1',
+                'person': '#FFFFFF'
+            };
+            
+            const newNode = {
+                id: nodeId,
+                label: nodeLabel,
+                group: nodeGroup,
+                color: colorMap[nodeGroup],
+                x: window.newNodePosition ? window.newNodePosition.x : undefined,
+                y: window.newNodePosition ? window.newNodePosition.y : undefined
+            };
+            
+            nodes.add(newNode);
+            allNodes.push(newNode);
+            
+            closeEditPanel();
+            updateStats();
+        }
+        
+        function createNewEdge() {
+            const fromId = document.getElementById('newEdgeFrom').value;
+            const toId = document.getElementById('newEdgeTo').value;
+            const edgeLabel = document.getElementById('newEdgeLabel').value.trim();
+            const edgePriority = document.getElementById('newEdgePriority').value;
+            
+            if (!fromId || !toId) {
+                alert('Bitte wählen Sie beide Nodes aus.');
+                return;
+            }
+            
+            if (fromId === toId) {
+                alert('Ein Node kann nicht mit sich selbst verbunden werden.');
+                return;
+            }
+            
+            const colorMap = {
+                'high': '#FF0000',
+                'medium': '#0066CC',
+                'low': '#666666'
+            };
+            
+            const widthMap = {
+                'high': 4,
+                'medium': 2,
+                'low': 1
+            };
+            
+            // Generate unique edge ID
+            const edgeId = `edge_${Date.now()}`;
+            
+            const newEdge = {
+                id: edgeId,
+                from: fromId,
+                to: toId,
+                label: edgeLabel,
+                priority: edgePriority,
+                color: colorMap[edgePriority],
+                width: widthMap[edgePriority],
+                arrows: 'to'
+            };
+            
+            edges.add(newEdge);
+            allEdges.push(newEdge);
+            
+            closeEditPanel();
+            updateStats();
+        }
+        
+        function closeEditPanel() {
+            document.getElementById('editPanel').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+        
         // Event Listeners
-        document.getElementById('layoutSelect').addEventListener('change', changeLayout);
         document.getElementById('categoryFilter').addEventListener('change', filterByCategory);
         document.getElementById('priorityFilter').addEventListener('change', filterByPriority);
-        
-        // Eingebettete Daten als Fallback
-        function getEmbeddedData() {
-            return {
-                nodes: [
-                    // Data Owner
-                    { id: 'DO1', label: '🏛️ Kantone/Gemeinden', group: 'dataOwner', color: '#FFF3CD', title: 'Data Owner für GWR' },
-                    { id: 'DO2', label: '🏛️ Kant. Vermessungsämter', group: 'dataOwner', color: '#FFF3CD', title: 'Data Owner für Geodaten' },
-                    { id: 'DO3', label: '🏛️ BKB/KBB', group: 'dataOwner', color: '#FFF3CD', title: 'Beschaffungskonferenz' },
-                    { id: 'DO4', label: '🏛️ Swisstopo', group: 'dataOwner', color: '#FFF3CD', title: 'Bundesamt für Landestopographie' },
-                    { id: 'DO5', label: '🏛️ Grundbuchämter', group: 'dataOwner', color: '#FFF3CD', title: 'Data Owner für Grundbuch' },
-                    { id: 'DO6', label: '🏛️ BFS', group: 'dataOwner', color: '#FFF3CD', title: 'Bundesamt für Statistik' },
-                    { id: 'DO7', label: '🏢 BBL', group: 'dataOwner', color: '#FFF3CD', title: 'Bundesamt für Bauten und Logistik' },
-                    
-                    // Externe Systeme
-                    { id: 'E1', label: 'GWR', group: 'extSystem', color: '#A8D8EA', title: 'Gebäude- und Wohnungsregister', dataOwner: 'Kantone/Gemeinden' },
-                    { id: 'E2', label: 'Kant. Vermessung', group: 'extSystem', color: '#A8D8EA', title: 'Kantonale Vermessungssysteme', dataOwner: 'Kant. Vermessungsämter' },
-                    { id: 'E3', label: 'SIMAP', group: 'extSystem', color: '#A8D8EA', title: 'Ausschreibungsplattform', dataOwner: 'BKB/KBB' },
-                    { id: 'E4', label: 'Swisstopo APIs', group: 'extSystem', color: '#A8D8EA', title: 'Geodienste', dataOwner: 'Swisstopo' },
-                    { id: 'E5', label: 'eGRIS', group: 'extSystem', color: '#A8D8EA', title: 'Grundbuch-System', dataOwner: 'Grundbuchämter' },
-                    { id: 'E6', label: 'BUR', group: 'extSystem', color: '#A8D8EA', title: 'Unternehmensregister', dataOwner: 'BFS' },
-                    
-                    // SAP ERP
-                    { id: 'B1', label: 'SAP RE-FX\n⭐ Führendes System', group: 'sapERP', color: '#90EE90', title: 'Immobilienstammdaten', dataOwner: 'BBL', status: 'Produktiv' },
-                    { id: 'B2', label: 'SAP PM', group: 'sapERP', color: '#90EE90', title: 'Instandhaltung', dataOwner: 'BBL', status: 'Produktiv' },
-                    { id: 'B3', label: 'SAP PS', group: 'sapERP', color: '#90EE90', title: 'Bauprojekte', dataOwner: 'BBL', status: 'Produktiv' },
-                    { id: 'B4', label: 'SAP FI-AA', group: 'sapERP', color: '#90EE90', title: 'Anlagenbuchhaltung', dataOwner: 'EFV/BBL', status: 'Produktiv' },
-                    { id: 'B5', label: 'SAP PPM', group: 'sapERP', color: '#90EE90', title: 'Projektportfolios', dataOwner: 'BBL', status: 'Produktiv' },
-                    
-                    // Fachsysteme
-                    { id: 'B6', label: 'Korasoft FLM', group: 'fachsystem', color: '#FFE4B5', title: 'Flächendaten', dataOwner: 'BBL', status: 'Produktiv' },
-                    { id: 'B7', label: 'EDM InterWatt', group: 'fachsystem', color: '#FFE4B5', title: 'Energiedaten', dataOwner: 'BBL', status: 'Produktiv' },
-                    { id: 'B8', label: 'Wüest EHP', group: 'fachsystem', color: '#FFE4B5', title: 'Erhaltungsplanung', dataOwner: 'BBL', status: 'Produktiv' },
-                    { id: 'B9', label: 'Mieterportal', group: 'fachsystem', color: '#D3D3D3', title: 'Nutzerdienste', dataOwner: 'BBL', status: 'Konzeption' },
-                    { id: 'B14', label: 'WSM', group: 'fachsystem', color: '#D3D3D3', title: 'Arbeitsplätze', dataOwner: 'BBL/EPA', status: 'Konzeption' },
-                    { id: 'B15', label: 'BVML', group: 'fachsystem', color: '#D3D3D3', title: 'Vergabemanagement', dataOwner: 'BBL', status: 'Konzeption' },
-                    
-                    // Dokumente
-                    { id: 'B10', label: 'ActaNova GEVER', group: 'dokumente', color: '#E6E6FA', title: 'Geschäftsverwaltung', dataOwner: 'BBL', status: 'Produktiv' },
-                    { id: 'B11', label: 'BIM/CDE', group: 'dokumente', color: '#E6E6FA', title: 'Bauwerksdokumentation', dataOwner: 'BBL', status: 'Produktiv' },
-                    { id: 'B13', label: 'DALA/FileNet', group: 'dokumente', color: '#E6E6FA', title: 'Planarchiv', dataOwner: 'BBL', status: 'Produktiv' },
-                    { id: 'B12', label: 'GIS IMMO', group: 'visualisierung', color: '#FFB6C1', title: 'Geo-Visualisierung', dataOwner: 'BBL', status: 'Produktiv' },
-                    
-                    // Nutzer
-                    { id: 'USER1', label: '👤 Bewirtschafter', group: 'person', color: '#FFFFFF', title: 'Facility Management' },
-                    { id: 'USER2', label: '👤 Mieter', group: 'person', color: '#FFFFFF', title: 'Endnutzer' }
-                ],
-                edges: [
-                    // Data Owner Verbindungen
-                    { from: 'DO1', to: 'E1', dashes: true, color: '#999999', width: 1 },
-                    { from: 'DO2', to: 'E2', dashes: true, color: '#999999', width: 1 },
-                    { from: 'DO3', to: 'E3', dashes: true, color: '#999999', width: 1 },
-                    { from: 'DO4', to: 'E4', dashes: true, color: '#999999', width: 1 },
-                    { from: 'DO5', to: 'E5', dashes: true, color: '#999999', width: 1 },
-                    { from: 'DO6', to: 'E6', dashes: true, color: '#999999', width: 1 },
-                    
-                    // Kritische Datenflüsse (Hoch)
-                    { from: 'E1', to: 'B1', label: 'EGID/EWID täglich', color: '#FF0000', width: 4, priority: 'high', arrows: 'to' },
-                    { from: 'B1', to: 'B2', label: 'Tech. Plätze', color: '#FF0000', width: 4, priority: 'high', arrows: 'to,from' },
-                    { from: 'B1', to: 'B3', label: 'WBS-Elemente', color: '#FF0000', width: 4, priority: 'high', arrows: 'to,from' },
-                    { from: 'B1', to: 'B4', label: 'Anlagen', color: '#FF0000', width: 4, priority: 'high', arrows: 'to,from' },
-                    { from: 'B1', to: 'B6', label: 'Arch. Objekte', color: '#FF0000', width: 4, priority: 'high', arrows: 'to,from' },
-                    { from: 'B1', to: 'B9', label: 'Mietobjekte', color: '#FF0000', width: 4, priority: 'high', arrows: 'to' },
-                    { from: 'B9', to: 'B2', label: 'IH-Meldungen', color: '#FF0000', width: 4, priority: 'high', arrows: 'to' },
-                    { from: 'B2', to: 'B9', label: 'Status-Updates', color: '#FF0000', width: 4, priority: 'high', arrows: 'to' },
-                    { from: 'B3', to: 'B4', label: 'Anlage im Bau', color: '#FF0000', width: 4, priority: 'high', arrows: 'to' },
-                    { from: 'B5', to: 'B3', label: 'Budget-Freigaben', color: '#FF0000', width: 4, priority: 'high', arrows: 'to' },
-                    
-                    // Mittlere Priorität
-                    { from: 'E6', to: 'B1', label: 'UID wöchentlich', color: '#0066CC', width: 2, priority: 'medium', arrows: 'to' },
-                    { from: 'E2', to: 'B1', label: 'Grundstücke', color: '#0066CC', width: 2, priority: 'medium', arrows: 'to' },
-                    { from: 'B1', to: 'B5', label: 'Portfolio', color: '#0066CC', width: 2, priority: 'medium', arrows: 'to' },
-                    { from: 'B1', to: 'B12', label: 'Gebäudedaten', color: '#0066CC', width: 2, priority: 'medium', arrows: 'to' },
-                    { from: 'B7', to: 'B1', label: 'Verbrauch', color: '#0066CC', width: 2, priority: 'medium', arrows: 'to' },
-                    
-                    // Niedrige Priorität
-                    { from: 'E5', to: 'B1', dashes: true, color: '#666666', width: 1, priority: 'low', arrows: 'to' },
-                    { from: 'USER1', to: 'B2', dashes: true, color: '#666666', width: 1, priority: 'low', arrows: 'to' },
-                    { from: 'USER2', to: 'B9', dashes: true, color: '#666666', width: 1, priority: 'low', arrows: 'to' }
-                ]
-            };
-        }
         
         // Initialisierung beim Laden der Seite
         window.onload = function() {
             loadData();
         };
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeEditPanel();
+            }
+            if (e.key === 'r' && e.ctrlKey) {
+                e.preventDefault();
+                resetView();
+            }
+            if (e.key === 'e' && e.ctrlKey) {
+                e.preventDefault();
+                toggleEditMode();
+            }
+        });
     </script>
 </body>
 </html>
