@@ -1,1 +1,608 @@
-
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMMO Integration Layer - Datenfluss Visualisierung</title>
+    
+    <!-- vis.js Network CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.6/dist/vis-network.min.css" rel="stylesheet" type="text/css" />
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            margin: 0 0 10px 0;
+            color: #2d3748;
+        }
+        
+        .subtitle {
+            color: #718096;
+            margin: 0;
+        }
+        
+        .controls {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .control-group {
+            display: inline-block;
+            margin-right: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .control-group label {
+            font-weight: 600;
+            color: #4a5568;
+            margin-right: 10px;
+        }
+        
+        select, button {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid #cbd5e0;
+            background: white;
+            color: #4a5568;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        select:hover, button:hover {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+        
+        button:hover {
+            background: #5a67d8;
+        }
+        
+        #network {
+            height: 700px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .legend {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .legend h3 {
+            margin-top: 0;
+            color: #2d3748;
+        }
+        
+        .legend-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            margin-right: 10px;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .info-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            display: none;
+            z-index: 1000;
+        }
+        
+        .info-panel.active {
+            display: block;
+        }
+        
+        .info-panel h4 {
+            margin-top: 0;
+            color: #2d3748;
+        }
+        
+        .info-panel .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #718096;
+        }
+        
+        .stats {
+            background: #f7fafc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏢 IMMO Integration Layer - Datenfluss Visualisierung</h1>
+            <p class="subtitle">Interaktive Darstellung der Systemlandschaft BBL</p>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>Layout:</label>
+                <select id="layoutSelect">
+                    <option value="hierarchical">Hierarchisch</option>
+                    <option value="physics">Physik-basiert</option>
+                    <option value="circular">Kreisförmig</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>Filter Kategorie:</label>
+                <select id="categoryFilter">
+                    <option value="all">Alle anzeigen</option>
+                    <option value="dataOwner">Nur Data Owner</option>
+                    <option value="extSystem">Externe Systeme</option>
+                    <option value="sapERP">SAP ERP</option>
+                    <option value="fachsystem">Fachsysteme</option>
+                    <option value="dokumente">Dokumente</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>Filter Kritikalität:</label>
+                <select id="priorityFilter">
+                    <option value="all">Alle Verbindungen</option>
+                    <option value="high">Nur hohe Priorität</option>
+                    <option value="medium">Nur mittlere Priorität</option>
+                    <option value="low">Nur niedrige Priorität</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <button onclick="resetView()">🔄 Ansicht zurücksetzen</button>
+            </div>
+            
+            <div class="control-group">
+                <button onclick="exportData()">💾 Export JSON</button>
+            </div>
+        </div>
+        
+        <div id="network"></div>
+        
+        <div class="legend">
+            <h3>Legende</h3>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #FFF3CD;"></div>
+                    <span><strong>Data Owner</strong> - Datenverantwortliche</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #A8D8EA;"></div>
+                    <span><strong>Externe Systeme</strong> - Datenquellen</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #90EE90;"></div>
+                    <span><strong>SAP ERP</strong> - Kernsysteme</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #FFE4B5;"></div>
+                    <span><strong>Fachsysteme</strong> - Speziallösungen</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #E6E6FA;"></div>
+                    <span><strong>Dokumente</strong> - DMS/Archiv</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #FFB6C1;"></div>
+                    <span><strong>Visualisierung</strong> - GIS/BIM</span>
+                </div>
+            </div>
+            <div class="stats" id="stats">
+                Lade Statistiken...
+            </div>
+        </div>
+        
+        <div class="info-panel" id="infoPanel">
+            <span class="close" onclick="closeInfoPanel()">×</span>
+            <h4 id="infoTitle">System Information</h4>
+            <div id="infoContent"></div>
+        </div>
+    </div>
+    
+    <!-- vis.js Network JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.6/dist/vis-network.min.js"></script>
+    
+    <script>
+        let network = null;
+        let nodes = null;
+        let edges = null;
+        let allNodes = [];
+        let allEdges = [];
+        
+        // Lade die Daten
+        async function loadData() {
+            try {
+                const response = await fetch('data.json');
+                const data = await response.json();
+                initializeNetwork(data);
+                updateStats();
+            } catch (error) {
+                console.error('Fehler beim Laden der Daten:', error);
+                // Fallback zu eingebetteten Daten
+                initializeNetwork(getEmbeddedData());
+                updateStats();
+            }
+        }
+        
+        function initializeNetwork(data) {
+            // Erstelle Nodes und Edges DataSets
+            allNodes = data.nodes;
+            allEdges = data.edges;
+            
+            nodes = new vis.DataSet(allNodes);
+            edges = new vis.DataSet(allEdges);
+            
+            // Erstelle das Netzwerk
+            const container = document.getElementById('network');
+            const networkData = {
+                nodes: nodes,
+                edges: edges
+            };
+            
+            const options = {
+                layout: {
+                    hierarchical: {
+                        enabled: true,
+                        direction: 'UD',
+                        sortMethod: 'directed',
+                        levelSeparation: 150,
+                        nodeSpacing: 200
+                    }
+                },
+                physics: {
+                    enabled: false,
+                    hierarchicalRepulsion: {
+                        nodeDistance: 200,
+                        springLength: 200
+                    }
+                },
+                nodes: {
+                    font: {
+                        size: 14,
+                        face: 'Arial'
+                    },
+                    borderWidth: 2,
+                    shadow: true
+                },
+                edges: {
+                    smooth: {
+                        type: 'cubicBezier',
+                        roundness: 0.4
+                    },
+                    font: {
+                        size: 10,
+                        align: 'horizontal',
+                        background: 'white',
+                        strokeWidth: 3,
+                        strokeColor: 'white'
+                    }
+                },
+                interaction: {
+                    hover: true,
+                    tooltipDelay: 200,
+                    hideEdgesOnDrag: true
+                }
+            };
+            
+            network = new vis.Network(container, networkData, options);
+            
+            // Event Handlers
+            network.on("click", function(params) {
+                if (params.nodes.length > 0) {
+                    showNodeInfo(params.nodes[0]);
+                }
+            });
+            
+            network.on("doubleClick", function(params) {
+                if (params.nodes.length > 0) {
+                    focusOnNode(params.nodes[0]);
+                }
+            });
+        }
+        
+        function showNodeInfo(nodeId) {
+            const node = nodes.get(nodeId);
+            const connectedNodes = network.getConnectedNodes(nodeId);
+            const connectedEdges = network.getConnectedEdges(nodeId);
+            
+            document.getElementById('infoTitle').textContent = node.label;
+            document.getElementById('infoContent').innerHTML = `
+                <p><strong>Kategorie:</strong> ${node.group}</p>
+                <p><strong>Beschreibung:</strong> ${node.title || 'Keine Beschreibung verfügbar'}</p>
+                <p><strong>Verbindungen:</strong> ${connectedNodes.length} Systeme</p>
+                <p><strong>Datenflüsse:</strong> ${connectedEdges.length}</p>
+                ${node.dataOwner ? `<p><strong>Data Owner:</strong> ${node.dataOwner}</p>` : ''}
+                ${node.status ? `<p><strong>Status:</strong> ${node.status}</p>` : ''}
+            `;
+            
+            document.getElementById('infoPanel').classList.add('active');
+        }
+        
+        function closeInfoPanel() {
+            document.getElementById('infoPanel').classList.remove('active');
+        }
+        
+        function focusOnNode(nodeId) {
+            network.focus(nodeId, {
+                scale: 1.5,
+                animation: {
+                    duration: 1000,
+                    easingFunction: 'easeInOutQuad'
+                }
+            });
+        }
+        
+        function changeLayout() {
+            const layout = document.getElementById('layoutSelect').value;
+            let options = {};
+            
+            switch(layout) {
+                case 'hierarchical':
+                    options = {
+                        layout: {
+                            hierarchical: {
+                                enabled: true,
+                                direction: 'UD',
+                                sortMethod: 'directed'
+                            }
+                        },
+                        physics: { enabled: false }
+                    };
+                    break;
+                case 'physics':
+                    options = {
+                        layout: { hierarchical: { enabled: false } },
+                        physics: { enabled: true }
+                    };
+                    break;
+                case 'circular':
+                    options = {
+                        layout: {
+                            hierarchical: { enabled: false }
+                        },
+                        physics: { enabled: false }
+                    };
+                    // Arrange nodes in circle
+                    const nodeIds = nodes.getIds();
+                    const angleStep = (2 * Math.PI) / nodeIds.length;
+                    const radius = 300;
+                    nodeIds.forEach((id, index) => {
+                        const angle = index * angleStep;
+                        network.moveNode(id, 
+                            radius * Math.cos(angle), 
+                            radius * Math.sin(angle)
+                        );
+                    });
+                    break;
+            }
+            
+            network.setOptions(options);
+        }
+        
+        function filterByCategory() {
+            const category = document.getElementById('categoryFilter').value;
+            
+            if (category === 'all') {
+                nodes.update(allNodes.map(node => ({ ...node, hidden: false })));
+            } else {
+                nodes.update(allNodes.map(node => ({
+                    ...node,
+                    hidden: node.group !== category
+                })));
+            }
+        }
+        
+        function filterByPriority() {
+            const priority = document.getElementById('priorityFilter').value;
+            
+            if (priority === 'all') {
+                edges.update(allEdges.map(edge => ({ ...edge, hidden: false })));
+            } else {
+                edges.update(allEdges.map(edge => ({
+                    ...edge,
+                    hidden: edge.priority !== priority
+                })));
+            }
+        }
+        
+        function resetView() {
+            network.fit({
+                animation: {
+                    duration: 1000,
+                    easingFunction: 'easeInOutQuad'
+                }
+            });
+            
+            // Reset all filters
+            document.getElementById('categoryFilter').value = 'all';
+            document.getElementById('priorityFilter').value = 'all';
+            document.getElementById('layoutSelect').value = 'hierarchical';
+            
+            filterByCategory();
+            filterByPriority();
+            changeLayout();
+        }
+        
+        function exportData() {
+            const data = {
+                nodes: nodes.get(),
+                edges: edges.get()
+            };
+            const dataStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'immo-network-data.json';
+            a.click();
+        }
+        
+        function updateStats() {
+            const nodeCount = nodes.length;
+            const edgeCount = edges.length;
+            const categories = {};
+            
+            nodes.forEach(node => {
+                categories[node.group] = (categories[node.group] || 0) + 1;
+            });
+            
+            const statsHtml = `
+                <strong>Statistiken:</strong><br>
+                Systeme: ${nodeCount} | Verbindungen: ${edgeCount}<br>
+                ${Object.entries(categories).map(([cat, count]) => 
+                    `${cat}: ${count}`).join(' | ')}
+            `;
+            
+            document.getElementById('stats').innerHTML = statsHtml;
+        }
+        
+        // Event Listeners
+        document.getElementById('layoutSelect').addEventListener('change', changeLayout);
+        document.getElementById('categoryFilter').addEventListener('change', filterByCategory);
+        document.getElementById('priorityFilter').addEventListener('change', filterByPriority);
+        
+        // Eingebettete Daten als Fallback
+        function getEmbeddedData() {
+            return {
+                nodes: [
+                    // Data Owner
+                    { id: 'DO1', label: '🏛️ Kantone/Gemeinden', group: 'dataOwner', color: '#FFF3CD', title: 'Data Owner für GWR' },
+                    { id: 'DO2', label: '🏛️ Kant. Vermessungsämter', group: 'dataOwner', color: '#FFF3CD', title: 'Data Owner für Geodaten' },
+                    { id: 'DO3', label: '🏛️ BKB/KBB', group: 'dataOwner', color: '#FFF3CD', title: 'Beschaffungskonferenz' },
+                    { id: 'DO4', label: '🏛️ Swisstopo', group: 'dataOwner', color: '#FFF3CD', title: 'Bundesamt für Landestopographie' },
+                    { id: 'DO5', label: '🏛️ Grundbuchämter', group: 'dataOwner', color: '#FFF3CD', title: 'Data Owner für Grundbuch' },
+                    { id: 'DO6', label: '🏛️ BFS', group: 'dataOwner', color: '#FFF3CD', title: 'Bundesamt für Statistik' },
+                    { id: 'DO7', label: '🏢 BBL', group: 'dataOwner', color: '#FFF3CD', title: 'Bundesamt für Bauten und Logistik' },
+                    
+                    // Externe Systeme
+                    { id: 'E1', label: 'GWR', group: 'extSystem', color: '#A8D8EA', title: 'Gebäude- und Wohnungsregister', dataOwner: 'Kantone/Gemeinden' },
+                    { id: 'E2', label: 'Kant. Vermessung', group: 'extSystem', color: '#A8D8EA', title: 'Kantonale Vermessungssysteme', dataOwner: 'Kant. Vermessungsämter' },
+                    { id: 'E3', label: 'SIMAP', group: 'extSystem', color: '#A8D8EA', title: 'Ausschreibungsplattform', dataOwner: 'BKB/KBB' },
+                    { id: 'E4', label: 'Swisstopo APIs', group: 'extSystem', color: '#A8D8EA', title: 'Geodienste', dataOwner: 'Swisstopo' },
+                    { id: 'E5', label: 'eGRIS', group: 'extSystem', color: '#A8D8EA', title: 'Grundbuch-System', dataOwner: 'Grundbuchämter' },
+                    { id: 'E6', label: 'BUR', group: 'extSystem', color: '#A8D8EA', title: 'Unternehmensregister', dataOwner: 'BFS' },
+                    
+                    // SAP ERP
+                    { id: 'B1', label: 'SAP RE-FX\n⭐ Führendes System', group: 'sapERP', color: '#90EE90', title: 'Immobilienstammdaten', dataOwner: 'BBL', status: 'Produktiv' },
+                    { id: 'B2', label: 'SAP PM', group: 'sapERP', color: '#90EE90', title: 'Instandhaltung', dataOwner: 'BBL', status: 'Produktiv' },
+                    { id: 'B3', label: 'SAP PS', group: 'sapERP', color: '#90EE90', title: 'Bauprojekte', dataOwner: 'BBL', status: 'Produktiv' },
+                    { id: 'B4', label: 'SAP FI-AA', group: 'sapERP', color: '#90EE90', title: 'Anlagenbuchhaltung', dataOwner: 'EFV/BBL', status: 'Produktiv' },
+                    { id: 'B5', label: 'SAP PPM', group: 'sapERP', color: '#90EE90', title: 'Projektportfolios', dataOwner: 'BBL', status: 'Produktiv' },
+                    
+                    // Fachsysteme
+                    { id: 'B6', label: 'Korasoft FLM', group: 'fachsystem', color: '#FFE4B5', title: 'Flächendaten', dataOwner: 'BBL', status: 'Produktiv' },
+                    { id: 'B7', label: 'EDM InterWatt', group: 'fachsystem', color: '#FFE4B5', title: 'Energiedaten', dataOwner: 'BBL', status: 'Produktiv' },
+                    { id: 'B8', label: 'Wüest EHP', group: 'fachsystem', color: '#FFE4B5', title: 'Erhaltungsplanung', dataOwner: 'BBL', status: 'Produktiv' },
+                    { id: 'B9', label: 'Mieterportal', group: 'fachsystem', color: '#D3D3D3', title: 'Nutzerdienste', dataOwner: 'BBL', status: 'Konzeption' },
+                    { id: 'B14', label: 'WSM', group: 'fachsystem', color: '#D3D3D3', title: 'Arbeitsplätze', dataOwner: 'BBL/EPA', status: 'Konzeption' },
+                    { id: 'B15', label: 'BVML', group: 'fachsystem', color: '#D3D3D3', title: 'Vergabemanagement', dataOwner: 'BBL', status: 'Konzeption' },
+                    
+                    // Dokumente
+                    { id: 'B10', label: 'ActaNova GEVER', group: 'dokumente', color: '#E6E6FA', title: 'Geschäftsverwaltung', dataOwner: 'BBL', status: 'Produktiv' },
+                    { id: 'B11', label: 'BIM/CDE', group: 'dokumente', color: '#E6E6FA', title: 'Bauwerksdokumentation', dataOwner: 'BBL', status: 'Produktiv' },
+                    { id: 'B13', label: 'DALA/FileNet', group: 'dokumente', color: '#E6E6FA', title: 'Planarchiv', dataOwner: 'BBL', status: 'Produktiv' },
+                    { id: 'B12', label: 'GIS IMMO', group: 'visualisierung', color: '#FFB6C1', title: 'Geo-Visualisierung', dataOwner: 'BBL', status: 'Produktiv' },
+                    
+                    // Nutzer
+                    { id: 'USER1', label: '👤 Bewirtschafter', group: 'person', color: '#FFFFFF', title: 'Facility Management' },
+                    { id: 'USER2', label: '👤 Mieter', group: 'person', color: '#FFFFFF', title: 'Endnutzer' }
+                ],
+                edges: [
+                    // Data Owner Verbindungen
+                    { from: 'DO1', to: 'E1', dashes: true, color: '#999999', width: 1 },
+                    { from: 'DO2', to: 'E2', dashes: true, color: '#999999', width: 1 },
+                    { from: 'DO3', to: 'E3', dashes: true, color: '#999999', width: 1 },
+                    { from: 'DO4', to: 'E4', dashes: true, color: '#999999', width: 1 },
+                    { from: 'DO5', to: 'E5', dashes: true, color: '#999999', width: 1 },
+                    { from: 'DO6', to: 'E6', dashes: true, color: '#999999', width: 1 },
+                    
+                    // Kritische Datenflüsse (Hoch)
+                    { from: 'E1', to: 'B1', label: 'EGID/EWID täglich', color: '#FF0000', width: 4, priority: 'high', arrows: 'to' },
+                    { from: 'B1', to: 'B2', label: 'Tech. Plätze', color: '#FF0000', width: 4, priority: 'high', arrows: 'to,from' },
+                    { from: 'B1', to: 'B3', label: 'WBS-Elemente', color: '#FF0000', width: 4, priority: 'high', arrows: 'to,from' },
+                    { from: 'B1', to: 'B4', label: 'Anlagen', color: '#FF0000', width: 4, priority: 'high', arrows: 'to,from' },
+                    { from: 'B1', to: 'B6', label: 'Arch. Objekte', color: '#FF0000', width: 4, priority: 'high', arrows: 'to,from' },
+                    { from: 'B1', to: 'B9', label: 'Mietobjekte', color: '#FF0000', width: 4, priority: 'high', arrows: 'to' },
+                    { from: 'B9', to: 'B2', label: 'IH-Meldungen', color: '#FF0000', width: 4, priority: 'high', arrows: 'to' },
+                    { from: 'B2', to: 'B9', label: 'Status-Updates', color: '#FF0000', width: 4, priority: 'high', arrows: 'to' },
+                    { from: 'B3', to: 'B4', label: 'Anlage im Bau', color: '#FF0000', width: 4, priority: 'high', arrows: 'to' },
+                    { from: 'B5', to: 'B3', label: 'Budget-Freigaben', color: '#FF0000', width: 4, priority: 'high', arrows: 'to' },
+                    
+                    // Mittlere Priorität
+                    { from: 'E6', to: 'B1', label: 'UID wöchentlich', color: '#0066CC', width: 2, priority: 'medium', arrows: 'to' },
+                    { from: 'E2', to: 'B1', label: 'Grundstücke', color: '#0066CC', width: 2, priority: 'medium', arrows: 'to' },
+                    { from: 'B1', to: 'B5', label: 'Portfolio', color: '#0066CC', width: 2, priority: 'medium', arrows: 'to' },
+                    { from: 'B1', to: 'B12', label: 'Gebäudedaten', color: '#0066CC', width: 2, priority: 'medium', arrows: 'to' },
+                    { from: 'B7', to: 'B1', label: 'Verbrauch', color: '#0066CC', width: 2, priority: 'medium', arrows: 'to' },
+                    
+                    // Niedrige Priorität
+                    { from: 'E5', to: 'B1', dashes: true, color: '#666666', width: 1, priority: 'low', arrows: 'to' },
+                    { from: 'USER1', to: 'B2', dashes: true, color: '#666666', width: 1, priority: 'low', arrows: 'to' },
+                    { from: 'USER2', to: 'B9', dashes: true, color: '#666666', width: 1, priority: 'low', arrows: 'to' }
+                ]
+            };
+        }
+        
+        // Initialisierung beim Laden der Seite
+        window.onload = function() {
+            loadData();
+        };
+    </script>
+</body>
+</html>
