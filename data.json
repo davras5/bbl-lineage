@@ -1,0 +1,859 @@
+{
+  "nodes": [
+    {
+      "id": "DO1",
+      "label": "🏛️ Kantone/Gemeinden",
+      "group": "dataOwner",
+      "color": "#FFF3CD",
+      "title": "Data Owner für GWR",
+      "shape": "box"
+    },
+    {
+      "id": "DO2",
+      "label": "🏛️ Kantonale\nVermessungsämter",
+      "group": "dataOwner",
+      "color": "#FFF3CD",
+      "title": "Data Owner für Geodaten",
+      "shape": "box"
+    },
+    {
+      "id": "DO3",
+      "label": "🏛️ BKB/KBB",
+      "group": "dataOwner",
+      "color": "#FFF3CD",
+      "title": "Beschaffungskonferenz des Bundes",
+      "shape": "box"
+    },
+    {
+      "id": "DO4",
+      "label": "🏛️ Swisstopo",
+      "group": "dataOwner",
+      "color": "#FFF3CD",
+      "title": "Bundesamt für Landestopographie",
+      "shape": "box"
+    },
+    {
+      "id": "DO5",
+      "label": "🏛️ Grundbuchämter",
+      "group": "dataOwner",
+      "color": "#FFF3CD",
+      "title": "Kantonale Grundbuchämter",
+      "shape": "box"
+    },
+    {
+      "id": "DO6",
+      "label": "🏛️ BFS",
+      "group": "dataOwner",
+      "color": "#FFF3CD",
+      "title": "Bundesamt für Statistik",
+      "shape": "box"
+    },
+    {
+      "id": "DO7",
+      "label": "🏢 BBL",
+      "group": "dataOwner",
+      "color": "#FFF3CD",
+      "title": "Bundesamt für Bauten und Logistik",
+      "shape": "box"
+    },
+    {
+      "id": "DO8",
+      "label": "🏢 EFV",
+      "group": "dataOwner",
+      "color": "#FFF3CD",
+      "title": "Eidg. Finanzverwaltung",
+      "shape": "box"
+    },
+    {
+      "id": "E1",
+      "label": "GWR",
+      "group": "extSystem",
+      "color": "#A8D8EA",
+      "title": "Gebäude- und Wohnungsregister\nEGID/EWID Identifikation",
+      "dataOwner": "Kantone/Gemeinden",
+      "status": "Produktiv",
+      "prioritaet": "MUSS"
+    },
+    {
+      "id": "E2",
+      "label": "Kant. Vermessung",
+      "group": "extSystem",
+      "color": "#A8D8EA",
+      "title": "Kantonale Vermessungssysteme\nGeodat��n, Bodenbedeckung",
+      "dataOwner": "Kant. Vermessungsämter",
+      "status": "Produktiv",
+      "prioritaet": "SOLL"
+    },
+    {
+      "id": "E3",
+      "label": "SIMAP",
+      "group": "extSystem",
+      "color": "#A8D8EA",
+      "title": "Schweizerische Plattform für öffentliche Beschaffung",
+      "dataOwner": "BKB/KBB",
+      "status": "Produktiv",
+      "prioritaet": "SOLL"
+    },
+    {
+      "id": "E4",
+      "label": "Swisstopo APIs",
+      "group": "extSystem",
+      "color": "#A8D8EA",
+      "title": "Basiskarten, Höhenmodelle, Luftbilder",
+      "dataOwner": "Swisstopo",
+      "status": "Produktiv",
+      "prioritaet": "KANN"
+    },
+    {
+      "id": "E5",
+      "label": "eGRIS",
+      "group": "extSystem",
+      "color": "#A8D8EA",
+      "title": "Elektronisches Grundbuch\nEigentumsrechte, Dienstbarkeiten",
+      "dataOwner": "Grundbuchämter",
+      "status": "Produktiv",
+      "prioritaet": "SOLL"
+    },
+    {
+      "id": "E6",
+      "label": "BUR",
+      "group": "extSystem",
+      "color": "#A8D8EA",
+      "title": "Betriebs- und Unternehmensregister\nUID-Register",
+      "dataOwner": "BFS",
+      "status": "Produktiv",
+      "prioritaet": "SOLL"
+    },
+    {
+      "id": "B1",
+      "label": "SAP RE-FX\n⭐ Führendes System",
+      "group": "sapERP",
+      "color": "#90EE90",
+      "title": "Real Estate Management\nImmobilienstammdaten, Wirtschaftseinheiten",
+      "dataOwner": "BBL",
+      "status": "Produktiv",
+      "prioritaet": "MUSS",
+      "shape": "ellipse",
+      "size": 40
+    },
+    {
+      "id": "B2",
+      "label": "SAP PM",
+      "group": "sapERP",
+      "color": "#90EE90",
+      "title": "Plant Maintenance\nInstandhaltungsprozesse",
+      "dataOwner": "BBL",
+      "status": "Produktiv",
+      "prioritaet": "MUSS"
+    },
+    {
+      "id": "B3",
+      "label": "SAP PS",
+      "group": "sapERP",
+      "color": "#90EE90",
+      "title": "Project System\nBauprojektstrukturen",
+      "dataOwner": "BBL",
+      "status": "Produktiv",
+      "prioritaet": "MUSS"
+    },
+    {
+      "id": "B4",
+      "label": "SAP FI-AA",
+      "group": "sapERP",
+      "color": "#90EE90",
+      "title": "Asset Accounting\nAnlagenbuchhaltung",
+      "dataOwner": "EFV/BBL",
+      "status": "Produktiv",
+      "prioritaet": "MUSS"
+    },
+    {
+      "id": "B5",
+      "label": "SAP PPM",
+      "group": "sapERP",
+      "color": "#90EE90",
+      "title": "Project Portfolio Management\nProjektportfolios",
+      "dataOwner": "BBL",
+      "status": "Produktiv",
+      "prioritaet": "SOLL"
+    },
+    {
+      "id": "B6",
+      "label": "Korasoft FLM",
+      "group": "fachsystem",
+      "color": "#FFE4B5",
+      "title": "Flächenmanagement\nArchitektonische Objekte, Bemessungen",
+      "dataOwner": "BBL",
+      "status": "Produktiv",
+      "prioritaet": "MUSS"
+    },
+    {
+      "id": "B7",
+      "label": "EDM InterWatt",
+      "group": "fachsystem",
+      "color": "#FFE4B5",
+      "title": "Energiedatenmanagement\nZähler, Verbrauchswerte",
+      "dataOwner": "BBL",
+      "status": "Produktiv",
+      "prioritaet": "MUSS"
+    },
+    {
+      "id": "B8",
+      "label": "Wüest EHP",
+      "group": "fachsystem",
+      "color": "#FFE4B5",
+      "title": "Erhaltungsplanungssystem\nGebäudekomponenten, Sanierungen",
+      "dataOwner": "BBL",
+      "status": "Produktiv",
+      "prioritaet": "SOLL"
+    },
+    {
+      "id": "B9",
+      "label": "Mieterportal",
+      "group": "fachsystem",
+      "color": "#D3D3D3",
+      "title": "Nutzerdienste\nStörmeldungen, Serviceanfragen",
+      "dataOwner": "BBL",
+      "status": "Konzeption",
+      "prioritaet": "MUSS"
+    },
+    {
+      "id": "B14",
+      "label": "WSM",
+      "group": "fachsystem",
+      "color": "#D3D3D3",
+      "title": "Workplace Management\nArbeitsplätze, Belegungen",
+      "dataOwner": "BBL/EPA",
+      "status": "Konzeption",
+      "prioritaet": "SOLL"
+    },
+    {
+      "id": "B15",
+      "label": "BVML",
+      "group": "fachsystem",
+      "color": "#D3D3D3",
+      "title": "Beschaffungs- und Vertragsmanagement\nVergabeverfahren, Angebote",
+      "dataOwner": "BBL",
+      "status": "Konzeption",
+      "prioritaet": "SOLL"
+    },
+    {
+      "id": "B10",
+      "label": "ActaNova GEVER",
+      "group": "dokumente",
+      "color": "#E6E6FA",
+      "title": "Geschäftsverwaltung\nDossiers, Dokumente",
+      "dataOwner": "BBL",
+      "status": "Produktiv",
+      "prioritaet": "MUSS"
+    },
+    {
+      "id": "B11",
+      "label": "BIM/CDE Bund",
+      "group": "dokumente",
+      "color": "#E6E6FA",
+      "title": "Building Information Modeling\nIFC-Objekte, Issues",
+      "dataOwner": "BBL",
+      "status": "Produktiv",
+      "prioritaet": "MUSS"
+    },
+    {
+      "id": "B13",
+      "label": "DALA/FileNet",
+      "group": "dokumente",
+      "color": "#E6E6FA",
+      "title": "Planarchiv\nTechnische Pläne, CAD-Dateien",
+      "dataOwner": "BBL",
+      "status": "Produktiv",
+      "prioritaet": "MUSS"
+    },
+    {
+      "id": "B12",
+      "label": "BBL GIS IMMO",
+      "group": "visualisierung",
+      "color": "#FFB6C1",
+      "title": "Geografisches Informationssystem\nGebäude-Visualisierung",
+      "dataOwner": "BBL",
+      "status": "Produktiv",
+      "prioritaet": "MUSS"
+    },
+    {
+      "id": "USER1",
+      "label": "👤 Bewirtschafter",
+      "group": "person",
+      "color": "#FFFFFF",
+      "title": "Facility Management",
+      "shape": "circularImage"
+    },
+    {
+      "id": "USER2",
+      "label": "👤 Mieter/Nutzer",
+      "group": "person",
+      "color": "#FFFFFF",
+      "title": "Endnutzer, Serviceanfragen",
+      "shape": "circularImage"
+    }
+  ],
+  "edges": [
+    {
+      "from": "DO1",
+      "to": "E1",
+      "dashes": true,
+      "color": "#999999",
+      "width": 1,
+      "title": "Data Ownership"
+    },
+    {
+      "from": "DO2",
+      "to": "E2",
+      "dashes": true,
+      "color": "#999999",
+      "width": 1,
+      "title": "Data Ownership"
+    },
+    {
+      "from": "DO3",
+      "to": "E3",
+      "dashes": true,
+      "color": "#999999",
+      "width": 1,
+      "title": "Data Ownership"
+    },
+    {
+      "from": "DO4",
+      "to": "E4",
+      "dashes": true,
+      "color": "#999999",
+      "width": 1,
+      "title": "Data Ownership"
+    },
+    {
+      "from": "DO5",
+      "to": "E5",
+      "dashes": true,
+      "color": "#999999",
+      "width": 1,
+      "title": "Data Ownership"
+    },
+    {
+      "from": "DO6",
+      "to": "E6",
+      "dashes": true,
+      "color": "#999999",
+      "width": 1,
+      "title": "Data Ownership"
+    },
+    {
+      "from": "DO7",
+      "to": "B1",
+      "dashes": true,
+      "color": "#999999",
+      "width": 1,
+      "title": "Data Ownership"
+    },
+    {
+      "from": "DO7",
+      "to": "B2",
+      "dashes": true,
+      "color": "#999999",
+      "width": 1,
+      "title": "Data Ownership"
+    },
+    {
+      "from": "DO7",
+      "to": "B3",
+      "dashes": true,
+      "color": "#999999",
+      "width": 1,
+      "title": "Data Ownership"
+    },
+    {
+      "from": "DO8",
+      "to": "B4",
+      "dashes": true,
+      "color": "#999999",
+      "width": 1,
+      "title": "Data Ownership"
+    },
+    {
+      "from": "E1",
+      "to": "B1",
+      "label": "EGID/EWID",
+      "color": "#FF0000",
+      "width": 4,
+      "priority": "high",
+      "arrows": "to",
+      "title": "API, Täglich, Kritikalität: Hoch"
+    },
+    {
+      "from": "B1",
+      "to": "B2",
+      "label": "Tech. Plätze",
+      "color": "#FF0000",
+      "width": 4,
+      "priority": "high",
+      "arrows": "to,from",
+      "title": "API, Real-time, Kritikalität: Hoch"
+    },
+    {
+      "from": "B1",
+      "to": "B3",
+      "label": "WBS-Elemente",
+      "color": "#FF0000",
+      "width": 4,
+      "priority": "high",
+      "arrows": "to,from",
+      "title": "API, Real-time, Kritikalität: Hoch"
+    },
+    {
+      "from": "B1",
+      "to": "B4",
+      "label": "Anlagen",
+      "color": "#FF0000",
+      "width": 4,
+      "priority": "high",
+      "arrows": "to,from",
+      "title": "API, Real-time, Kritikalität: Hoch"
+    },
+    {
+      "from": "B1",
+      "to": "B6",
+      "label": "Arch. Objekte",
+      "color": "#FF0000",
+      "width": 4,
+      "priority": "high",
+      "arrows": "to,from",
+      "title": "API, Real-time, Kritikalität: Hoch"
+    },
+    {
+      "from": "B1",
+      "to": "B9",
+      "label": "Mietobjekte",
+      "color": "#FF0000",
+      "width": 4,
+      "priority": "high",
+      "arrows": "to",
+      "title": "API, Real-time, Kritikalität: Hoch"
+    },
+    {
+      "from": "B9",
+      "to": "B2",
+      "label": "IH-Meldungen",
+      "color": "#FF0000",
+      "width": 4,
+      "priority": "high",
+      "arrows": "to",
+      "title": "API, Real-time, Kritikalität: Hoch"
+    },
+    {
+      "from": "B2",
+      "to": "B9",
+      "label": "Status-Updates",
+      "color": "#FF0000",
+      "width": 4,
+      "priority": "high",
+      "arrows": "to",
+      "title": "Event, Real-time, Kritikalität: Hoch"
+    },
+    {
+      "from": "B3",
+      "to": "B4",
+      "label": "Anlage im Bau",
+      "color": "#FF0000",
+      "width": 4,
+      "priority": "high",
+      "arrows": "to",
+      "title": "API, Täglich, Kritikalität: Hoch"
+    },
+    {
+      "from": "B5",
+      "to": "B3",
+      "label": "Budget-Freigaben",
+      "color": "#FF0000",
+      "width": 4,
+      "priority": "high",
+      "arrows": "to",
+      "title": "API, Bei Bedarf, Kritikalität: Hoch"
+    },
+    {
+      "from": "B15",
+      "to": "B10",
+      "label": "Vergabedossier",
+      "color": "#FF0000",
+      "width": 4,
+      "priority": "high",
+      "arrows": "to",
+      "title": "API, Bei Abschluss, Kritikalität: Hoch"
+    },
+    {
+      "from": "B15",
+      "to": "B3",
+      "label": "Auftragsdaten",
+      "color": "#FF0000",
+      "width": 4,
+      "priority": "high",
+      "arrows": "to",
+      "title": "API, Bei Zuschlag, Kritikalität: Hoch"
+    },
+    {
+      "from": "B3",
+      "to": "B10",
+      "label": "Projektakten",
+      "color": "#FF0000",
+      "width": 4,
+      "priority": "high",
+      "arrows": "to",
+      "title": "API, Bei Abschluss, Kritikalität: Hoch"
+    },
+    {
+      "from": "B13",
+      "to": "B6",
+      "label": "Grundrisse",
+      "color": "#FF0000",
+      "width": 4,
+      "priority": "high",
+      "arrows": "to",
+      "title": "Manuell, Bei Änderung, Kritikalität: Hoch"
+    },
+    {
+      "from": "B8",
+      "to": "B5",
+      "label": "Erhaltungsbudgets",
+      "color": "#FF0000",
+      "width": 4,
+      "priority": "high",
+      "arrows": "to",
+      "title": "Batch, Jährlich, Kritikalität: Hoch"
+    },
+    {
+      "from": "B6",
+      "to": "B1",
+      "label": "Flächenmutationen",
+      "color": "#FF0000",
+      "width": 4,
+      "priority": "high",
+      "arrows": "to",
+      "title": "Manuell/Upload, Bei Änderung, Kritikalität: Hoch"
+    },
+    {
+      "from": "B11",
+      "to": "B3",
+      "label": "Bauwerksdoku",
+      "color": "#FF0000",
+      "width": 4,
+      "priority": "high",
+      "arrows": "to",
+      "title": "API, Bei Meilenstein, Kritikalität: Hoch"
+    },
+    {
+      "from": "E6",
+      "to": "B1",
+      "label": "UID Firmendaten",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to",
+      "title": "API, Wöchentlich, Kritikalität: Mittel"
+    },
+    {
+      "from": "E2",
+      "to": "B1",
+      "label": "Grundstücksgrenzen",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to",
+      "title": "WMS/Manuell, Quartalsweise, Kritikalität: Mittel"
+    },
+    {
+      "from": "E1",
+      "to": "B12",
+      "label": "Gebäudeadressen",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to",
+      "title": "API, Täglich, Kritikalität: Mittel"
+    },
+    {
+      "from": "E2",
+      "to": "B12",
+      "label": "Bodenbedeckung",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to",
+      "title": "WMS, Monatlich, Kritikalität: Mittel"
+    },
+    {
+      "from": "B1",
+      "to": "B5",
+      "label": "Portfolio Items",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to",
+      "title": "API, Täglich, Kritikalität: Mittel"
+    },
+    {
+      "from": "B1",
+      "to": "B12",
+      "label": "Gebäudedaten",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to",
+      "title": "Batch, Täglich, Kritikalität: Mittel"
+    },
+    {
+      "from": "B1",
+      "to": "B14",
+      "label": "Arbeitsplätze",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to,from",
+      "title": "API, Real-time, Kritikalität: Mittel"
+    },
+    {
+      "from": "B9",
+      "to": "B14",
+      "label": "Unterbringung",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to",
+      "title": "API, Real-time, Kritikalität: Mittel"
+    },
+    {
+      "from": "B7",
+      "to": "B1",
+      "label": "Verbrauchsdaten",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to",
+      "title": "Batch, Monatlich, Kritikalität: Mittel"
+    },
+    {
+      "from": "B7",
+      "to": "B8",
+      "label": "Energiekennzahlen",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to",
+      "title": "Batch, Monatlich, Kritikalität: Mittel"
+    },
+    {
+      "from": "B8",
+      "to": "B3",
+      "label": "Sanierungsplanung",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to",
+      "title": "Batch, Jährlich, Kritikalität: Mittel"
+    },
+    {
+      "from": "B3",
+      "to": "B5",
+      "label": "Projektfortschritt",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to,from",
+      "title": "API, Wöchentlich, Kritikalität: Mittel"
+    },
+    {
+      "from": "E3",
+      "to": "B15",
+      "label": "Ausschreibungen",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to",
+      "title": "API, Real-time, Kritikalität: Mittel"
+    },
+    {
+      "from": "B11",
+      "to": "B10",
+      "label": "BIM-Modelle",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to",
+      "title": "API, Bei Änderung, Kritikalität: Mittel"
+    },
+    {
+      "from": "B11",
+      "to": "B13",
+      "label": "Tech. Pläne",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to",
+      "title": "Batch, Wöchentlich, Kritikalität: Mittel"
+    },
+    {
+      "from": "B3",
+      "to": "B11",
+      "label": "Projektstruktur",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to",
+      "title": "API, Wöchentlich, Kritikalität: Mittel"
+    },
+    {
+      "from": "B10",
+      "to": "B1",
+      "label": "Verträge",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to",
+      "title": "Manuell, Bei Bedarf, Kritikalität: Mittel"
+    },
+    {
+      "from": "B12",
+      "to": "B5",
+      "label": "Portfolio-Karten",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to",
+      "title": "API, Bei Bedarf, Kritikalität: Mittel"
+    },
+    {
+      "from": "B2",
+      "to": "B1",
+      "label": "Anlagen-Updates",
+      "color": "#0066CC",
+      "width": 2,
+      "priority": "medium",
+      "arrows": "to",
+      "title": "API, Real-time, Kritikalität: Mittel"
+    },
+    {
+      "from": "E5",
+      "to": "B1",
+      "dashes": true,
+      "color": "#666666",
+      "width": 1,
+      "priority": "low",
+      "arrows": "to",
+      "label": "Eigentum",
+      "title": "Manuell/CSV, Monatlich, Kritikalität: Niedrig"
+    },
+    {
+      "from": "B7",
+      "to": "B2",
+      "dashes": true,
+      "color": "#666666",
+      "width": 1,
+      "priority": "low",
+      "arrows": "to",
+      "label": "Zählerstände",
+      "title": "API, Täglich, Kritikalität: Niedrig"
+    },
+    {
+      "from": "B2",
+      "to": "B8",
+      "dashes": true,
+      "color": "#666666",
+      "width": 1,
+      "priority": "low",
+      "arrows": "to",
+      "label": "Wartungshistorie",
+      "title": "Batch, Monatlich, Kritikalität: Niedrig"
+    },
+    {
+      "from": "B2",
+      "to": "B10",
+      "dashes": true,
+      "color": "#666666",
+      "width": 1,
+      "priority": "low",
+      "arrows": "to",
+      "label": "Wartungsprotokolle",
+      "title": "Batch, Monatlich, Kritikalität: Niedrig"
+    },
+    {
+      "from": "B13",
+      "to": "B12",
+      "dashes": true,
+      "color": "#666666",
+      "width": 1,
+      "priority": "low",
+      "arrows": "to",
+      "label": "CAD-Pläne",
+      "title": "Batch, Wöchentlich, Kritikalität: Niedrig"
+    },
+    {
+      "from": "E4",
+      "to": "B12",
+      "dashes": true,
+      "color": "#666666",
+      "width": 1,
+      "priority": "low",
+      "arrows": "to",
+      "label": "Basiskarten",
+      "title": "API, Bei Bedarf, Kritikalität: Niedrig"
+    },
+    {
+      "from": "E4",
+      "to": "B11",
+      "dashes": true,
+      "color": "#666666",
+      "width": 1,
+      "priority": "low",
+      "arrows": "to",
+      "label": "Geodaten",
+      "title": "API, Bei Bedarf, Kritikalität: Niedrig"
+    },
+    {
+      "from": "B12",
+      "to": "B9",
+      "dashes": true,
+      "color": "#666666",
+      "width": 1,
+      "priority": "low",
+      "arrows": "to",
+      "label": "Standort-Visual",
+      "title": "API, Real-time, Kritikalität: Niedrig"
+    },
+    {
+      "from": "USER2",
+      "to": "B9",
+      "dashes": true,
+      "color": "#666666",
+      "width": 1,
+      "priority": "low",
+      "arrows": "to",
+      "label": "Störmeldungen",
+      "title": "Portal-Zugriff"
+    },
+    {
+      "from": "USER1",
+      "to": "B2",
+      "dashes": true,
+      "color": "#666666",
+      "width": 1,
+      "priority": "low",
+      "arrows": "to",
+      "label": "Aufträge",
+      "title": "Portal-Zugriff"
+    },
+    {
+      "from": "USER1",
+      "to": "B7",
+      "dashes": true,
+      "color": "#666666",
+      "width": 1,
+      "priority": "low",
+      "arrows": "to",
+      "label": "Verbrauch",
+      "title": "Portal-Zugriff"
+    }
+  ]
+}
